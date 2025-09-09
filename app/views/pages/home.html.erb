@@ -1,1 +1,8 @@
-<h1>Homepage</h1>
+<div class="banner">
+  <%= image_tag "nomade_logo.png", alt: "Nomade - restaurant healthy", class: "logo" %>
+</div>
+<div>
+  <% @dishes.each do |dish| %>
+    <p><%= dish.name %></p>
+  <% end %>
+</div>

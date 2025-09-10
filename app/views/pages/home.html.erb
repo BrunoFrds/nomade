@@ -1,6 +1,33 @@
-<div class="banner">
+<header>
   <%= image_tag "nomade_logo.png", alt: "Nomade - restaurant healthy", class: "logo" %>
-</div>
+</header>
+
+<%= form_with(model: @reservation, html: { class: "reservation-form" }) do |f| %>
+  <div class="form-group">
+    <%= f.label :guests, "Nombre de personnes" %>
+    <%= f.select :guests, options_for_select([
+        "1", "2", "3", "4", "5",
+        "6", "7", "8", "9", "10"
+      ]), class: "guest-select" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :date %>
+    <%= f.text_field :date, value: Date.today, data: { controller: "datepicker" } %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :time %>
+    <%= f.select :time, options_for_select([
+        "12:00", "12:30", "13:00", "13:30",
+        "14:00", "14:30", "19:00", "19:30",
+        "20:00", "20:30", "21:00", "21:30"
+      ]), class: "time-select" %>
+  </div>
+
+  <%= f.submit "Réserver" %>
+<% end %>
+
 <div>
   <% @dishes.each do |dish| %>
     <p><%= dish.name %></p>

@@ -1,33 +1,77 @@
+<!-- Affichage du logo -->
 <header>
   <%= image_tag "nomade_logo.png", alt: "Nomade - restaurant healthy", class: "logo" %>
 </header>
 
-<%= form_with(model: @reservation, html: { class: "reservation-form" }) do |f| %>
-  <div class="form-group">
-    <%= f.label :guests, "Nombre de personnes" %>
-    <%= f.select :guests, options_for_select([
-        "1", "2", "3", "4", "5",
-        "6", "7", "8", "9", "10"
-      ]), class: "guest-select" %>
+<!-- Affichage de la bannière -->
+<div>
+  <%= image_tag "nomade_banner.png", alt: "Menu nomade", class: "banner" %>
+</div>
+
+<!-- Formulaire de réservation -->
+<%= form_with(model: @reservation, url: reservations_path, method: :post, local: true, scope: :reservation, html: { class: "reservation-form", data: { controller: "reservation" } }) do |f| %>
+
+  <!-- Bloc 1 : date / heure / nombre de personnes -->
+  <div class="reservation-info">
+    <div class="form-group">
+      <%= f.label :people, "Personnes" %>
+      <%= f.select :people, options_for_select([
+          "1", "2", "3", "4", "5",
+          "6", "7", "8", "9", "10"
+        ]), class: "guest-select" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :date %>
+      <%= f.text_field :date, value: Date.today, data: { controller: "datepicker" } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :time %>
+      <%= f.select :time, options_for_select([
+          "12:00", "12:30", "13:00", "13:30",
+          "14:00", "14:30", "19:00", "19:30",
+          "20:00", "20:30", "21:00", "21:30"
+        ]), class: "time-select" %>
+    </div>
   </div>
 
-  <div class="form-group">
-    <%= f.label :date %>
-    <%= f.text_field :date, value: Date.today, data: { controller: "datepicker" } %>
+  <!-- Bloc 2 : infos client, caché au départ -->
+  <div class="client-info" style="display: none;">
+    <div class="form-group">
+      <%= f.label :first_name, "Prénom" %>
+      <%= f.text_field :first_name, placeholder: "Votre prénom" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :last_name, "Nom" %>
+      <%= f.text_field :last_name, placeholder: "Votre nom" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :email, "Email" %>
+      <%= f.email_field :email, placeholder: "Votre email" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :phone, "Téléphone" %>
+      <%= f.telephone_field :phone, placeholder: "Votre numéro" %>
+    </div>
   </div>
 
-  <div class="form-group">
-    <%= f.label :time %>
-    <%= f.select :time, options_for_select([
-        "12:00", "12:30", "13:00", "13:30",
-        "14:00", "14:30", "19:00", "19:30",
-        "20:00", "20:30", "21:00", "21:30"
-      ]), class: "time-select" %>
-  </div>
+  <!-- Bouton de validation -->
+  <%= f.submit "Valider", class: "btn-reserve", data: { action: "click->reservation#handleClick" } %>
 
-  <%= f.submit "Réserver" %>
 <% end %>
 
+<!-- Affichage des messages flash -->
+<% if flash[:notice] %>
+  <div class="flash notice"><%= flash[:notice] %></div>
+<% elsif flash[:alert] %>
+  <div class="flash alert"><%= flash[:alert] %></div>
+<% end %>
+
+<!-- Affichage des plats -->
 <div>
   <% @dishes.each do |dish| %>
     <p><%= dish.name %></p>

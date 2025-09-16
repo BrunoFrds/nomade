@@ -13,14 +13,18 @@
  *= require_tree .
  *= require_self
  */
-@import "pages/header";
-@import "pages/banner";
+@use "pages/header";
+@use "pages/banner";
+@use "pages/form";
+@use "pages/dish";
+@use "pages/footer";
+
 
 body {
   font-family: 'Helvetica', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #fff;
+  background-color: #FCF6B2;
   color: #333;
 }
 

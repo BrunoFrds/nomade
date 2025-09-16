@@ -1,0 +1,30 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: 0 auto;
+  h2 {
+    text-align: center;
+    font-size: 30px;
+    margin: 20px 0;
+    color: #8AAE72;
+    text-transform: uppercase;
+    border-bottom: 2px solid #8AAE72;
+    padding-bottom: 5px;
+  }
+  .dish {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    .dish-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+    }
+    .dish-description {
+      font-style: italic;
+      color: #666;
+      text-align: right;
+    }
+  }
+}

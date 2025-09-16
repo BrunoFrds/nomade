@@ -72,8 +72,40 @@
 <% end %>
 
 <!-- Affichage des plats -->
-<div>
-  <% @dishes.each do |dish| %>
-    <p><%= dish.name %></p>
+<div class="menu">
+  <% @dishes.group_by(&:category).each do |category, dishes| %>
+    <h2><%= category %></h2>
+      <% dishes.each do |dish| %>
+        <div class="dish">
+          <div class="dish-header">
+            <p><%= dish.name %></p>
+            <p><%= dish.price %></p>
+          </div>
+          <div class="dish-description">
+            <p><%= dish.description %></p>
+          </div>
+        </div>
+      <% end %>
   <% end %>
 </div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <div class="info-footer">
+      <p>Nomade - Restaurant Healthy</p>
+      <p>123 Rue de la Santé, 75000 Paris</p>
+      <p>Téléphone : 01 23 45 67 89</p>
+      <p>Email : nomade@gmail.com</p>
+    </div>
+    <div class="social-footer">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+    <div class="legal-footer">
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+    </div>
+  </div>
+</footer>

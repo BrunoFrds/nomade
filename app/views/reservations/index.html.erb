@@ -1,0 +1,13 @@
+<h1>Reservations</h1>
+<% @reservations.each do |reservation| %>
+  <div class="reservation-card">
+    <p><strong>Nom:</strong> <%= reservation.last_name %></p>
+    <p><strong>Prénom:</strong> <%= reservation.first_name %></p>
+    <p><strong>Email:</strong> <%= reservation.email %></p>
+    <p><strong>Téléphone:</strong> <%= reservation.phone %></p>
+    <p><strong>Date:</strong> <%= reservation.date.strftime("%d/%m/%Y") %></p>
+    <p><strong>Heure:</strong> <%= reservation.time %></p>
+    <p><strong>Nombre de personnes:</strong> <%= reservation.people %></p>
+  </div>
+  <%= link_to "Delete", reservation_path(reservation), data: {turbo_method: :delete, turbo_confirm: "Êtes-vous sûr?"} %>
+<% end %>

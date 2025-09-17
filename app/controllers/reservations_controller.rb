@@ -1,8 +1,16 @@
 class ReservationsController < ApplicationController
+  before_action :authenticate_user!, only: [:index]
 
   # GET /reservations
   def index
-    @reservations = Reservation.all
+    @reservations = Reservation.all.all.order(:date, :time)
+  end
+
+  # DELETE /reservations/:id
+  def destroy
+    @reservation = Reservation.find(params[:id])
+    @reservation.destroy
+    redirect_to reservations_path, notice: 'La réservation a été supprimée.'
   end
 
   # POST /reservations

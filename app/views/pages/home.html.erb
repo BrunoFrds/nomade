@@ -1,67 +1,65 @@
-<!-- Affichage du logo -->
-<header>
-  <%= image_tag "nomade_logo.png", alt: "Nomade - restaurant healthy", class: "logo" %>
-</header>
+<!-- Lien vers les réservations, visible uniquement si l'utilisateur est connecté -->
+<% if user_signed_in? %>
+  <%= link_to "Voir les réservations", reservations_path%>
+<% end %>
 
-<!-- Affichage de la bannière -->
-<div>
-  <%= image_tag "nomade_banner.png", alt: "Menu nomade", class: "banner" %>
-</div>
+<!-- Formulaire de réservation, caché si l'utilisateur est connecté -->
+<% unless user_signed_in? %>
 
-<!-- Formulaire de réservation -->
-<%= form_with(model: @reservation, url: reservations_path, method: :post, local: true, scope: :reservation, html: { class: "reservation-form", data: { controller: "reservation" } }) do |f| %>
+  <!-- Formulaire de réservation -->
+  <%= form_with(model: @reservation, url: reservations_path, method: :post, local: true, scope: :reservation, html: { class: "reservation-form", data: { controller: "reservation" } }) do |f| %>
 
-  <!-- Bloc 1 : date / heure / nombre de personnes -->
-  <div class="reservation-info">
-    <div class="form-group">
-      <%= f.label :people, "Personnes" %>
-      <%= f.select :people, options_for_select([
-          "1", "2", "3", "4", "5",
-          "6", "7", "8", "9", "10"
-        ]), class: "guest-select" %>
+    <!-- Bloc 1 : date / heure / nombre de personnes -->
+    <div class="reservation-info">
+      <div class="form-group">
+        <%= f.label :people, "Personnes" %>
+        <%= f.select :people, options_for_select([
+            "1", "2", "3", "4", "5",
+            "6", "7", "8", "9", "10"
+          ]), class: "guest-select" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :date %>
+        <%= f.text_field :date, value: Date.today, data: { controller: "datepicker" } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :time %>
+        <%= f.select :time, options_for_select([
+            "12:00", "12:30", "13:00", "13:30",
+            "14:00", "14:30", "19:00", "19:30",
+            "20:00", "20:30", "21:00", "21:30"
+          ]), class: "time-select" %>
+      </div>
     </div>
 
-    <div class="form-group">
-      <%= f.label :date %>
-      <%= f.text_field :date, value: Date.today, data: { controller: "datepicker" } %>
+    <!-- Bloc 2 : infos client, caché au départ -->
+    <div class="client-info" style="display: none;">
+      <div class="form-group">
+        <%= f.label :first_name, "Prénom" %>
+        <%= f.text_field :first_name, placeholder: "Votre prénom" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :last_name, "Nom" %>
+        <%= f.text_field :last_name, placeholder: "Votre nom" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, placeholder: "Votre email" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :phone, "Téléphone" %>
+        <%= f.telephone_field :phone, placeholder: "Votre numéro" %>
+      </div>
     </div>
 
-    <div class="form-group">
-      <%= f.label :time %>
-      <%= f.select :time, options_for_select([
-          "12:00", "12:30", "13:00", "13:30",
-          "14:00", "14:30", "19:00", "19:30",
-          "20:00", "20:30", "21:00", "21:30"
-        ]), class: "time-select" %>
-    </div>
-  </div>
-
-  <!-- Bloc 2 : infos client, caché au départ -->
-  <div class="client-info" style="display: none;">
-    <div class="form-group">
-      <%= f.label :first_name, "Prénom" %>
-      <%= f.text_field :first_name, placeholder: "Votre prénom" %>
-    </div>
-
-    <div class="form-group">
-      <%= f.label :last_name, "Nom" %>
-      <%= f.text_field :last_name, placeholder: "Votre nom" %>
-    </div>
-
-    <div class="form-group">
-      <%= f.label :email, "Email" %>
-      <%= f.email_field :email, placeholder: "Votre email" %>
-    </div>
-
-    <div class="form-group">
-      <%= f.label :phone, "Téléphone" %>
-      <%= f.telephone_field :phone, placeholder: "Votre numéro" %>
-    </div>
-  </div>
-
-  <!-- Bouton de validation -->
-  <%= f.submit "Valider", class: "btn-reserve", data: { action: "click->reservation#handleClick" } %>
-
+    <!-- Bouton de validation -->
+    <%= f.submit "Valider", class: "btn-reserve", data: { action: "click->reservation#handleClick" } %>
+  <% end %>
 <% end %>
 
 <!-- Affichage des plats -->
@@ -87,6 +85,8 @@
     </div>
     <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "dropdown-item" %>
   <% end %>
+
+  <!-- Groupement des plats par catégorie et affichage -->
   <% @dishes.group_by(&:category).each do |category, dishes| %>
     <div>
       <h2><%= category %></h2>
@@ -113,8 +113,7 @@
                   <% end %>
                 </div>
               </div>
-              <%= link_to "Delete", dish_path(dish), data: {turbo_method: :delete, turbo_confirm: "Êtes-vous sûr?"}
-              %>
+              <%= link_to "Delete", dish_path(dish), data: {turbo_method: :delete, turbo_confirm: "Êtes-vous sûr?"} %>
             <% end %>
         </div>
         <div class="dish-description">
@@ -124,24 +123,3 @@
     <% end %>
   <% end %>
 </div>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-content">
-    <div class="info-footer">
-      <p>Nomade - Restaurant Healthy</p>
-      <p>123 Rue de la Santé, 75000 Paris</p>
-      <p>Téléphone : 01 23 45 67 89</p>
-      <p>Email : nomade@gmail.com</p>
-    </div>
-    <div class="social-footer">
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-    </div>
-    <div class="legal-footer">
-      <a href="#">Mentions légales</a>
-      <a href="#">Politique de confidentialité</a>
-    </div>
-  </div>
-</footer>

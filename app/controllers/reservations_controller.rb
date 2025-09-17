@@ -1,4 +1,10 @@
 class ReservationsController < ApplicationController
+
+  # GET /reservations
+  def index
+    @reservations = Reservation.all
+  end
+
   # POST /reservations
   def create
     @reservation = Reservation.new(reservation_params) # on initialise une nouvelle réservation avec les paramètres autorisés

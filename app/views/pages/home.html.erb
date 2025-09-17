@@ -64,28 +64,64 @@
 
 <% end %>
 
-<!-- Affichage des messages flash -->
-<% if flash[:notice] %>
-  <div class="flash notice"><%= flash[:notice] %></div>
-<% elsif flash[:alert] %>
-  <div class="flash alert"><%= flash[:alert] %></div>
-<% end %>
-
 <!-- Affichage des plats -->
 <div class="menu">
+  <!-- Formulaire d'ajout de plat, visible uniquement si l'utilisateur est connecté -->
+  <% if user_signed_in? %>
+    <div data-controller="toggle-form" class="add-dish">
+      <button data-action="click->toggle-form#toggle">Ajouter</button>
+      <div data-toggle-form-target="form" style="display:none;">
+        <%= form_with(model: @dish, url: dishes_path, method: :post, html: { class: "add-form"}) do |f| %>
+          <%= f.label :name, "Nom" %>
+          <%= f.text_field :name %>
+          <%= f.label :category %>
+          <%= f.select :category, options_for_select(@dishes.group_by(&:category).keys) %>
+          <%= f.label :price, "Prix" %>
+          <%= f.number_field :price%>
+          <%= f.label :description, "Description" %>
+          <%= f.text_area :description %>
+
+          <%= f.submit "Valider", class: "btn-add" %>
+        <% end %>
+      </div>
+    </div>
+    <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "dropdown-item" %>
+  <% end %>
   <% @dishes.group_by(&:category).each do |category, dishes| %>
-    <h2><%= category %></h2>
-      <% dishes.each do |dish| %>
-        <div class="dish">
-          <div class="dish-header">
-            <p><%= dish.name %></p>
-            <p><%= dish.price %></p>
-          </div>
-          <div class="dish-description">
-            <p><%= dish.description %></p>
-          </div>
+    <div>
+      <h2><%= category %></h2>
+    </div>
+    <% dishes.each do |dish| %>
+      <div class="dish">
+        <div class="dish-header">
+          <p><%= dish.name %></p>
+          <p><%= dish.price %></p>
+            <!-- Formulaire d'édition et de suppression, visible uniquement si l'utilisateur est connecté -->
+            <% if user_signed_in? %>
+              <div data-controller="toggle-form" class="add-dish">
+                <button data-action="click->toggle-form#toggle">Modifier</button>
+                <div data-toggle-form-target="form" style="display:none;">
+                  <%= form_with(model: @dish, url: dish_path(dish), method: :patch, html: { class: "update-form"}) do |f| %>
+                    <%= f.label :name, "Nom" %>
+                    <%= f.text_field :name %>
+                    <%= f.label :price, "Prix" %>
+                    <%= f.number_field :price%>
+                    <%= f.label :description, "Description" %>
+                    <%= f.text_area :description %>
+
+                    <%= f.submit "Valider", class: "btn-update" %>
+                  <% end %>
+                </div>
+              </div>
+              <%= link_to "Delete", dish_path(dish), data: {turbo_method: :delete, turbo_confirm: "Êtes-vous sûr?"}
+              %>
+            <% end %>
         </div>
-      <% end %>
+        <div class="dish-description">
+          <p><%= dish.description %></p>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 </div>
 

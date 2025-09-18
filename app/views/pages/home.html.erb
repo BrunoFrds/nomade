@@ -63,13 +63,13 @@
 <% end %>
 
 <!-- Affichage de la réservation de l'utilisateur si elle existe -->
-<% if @user_reservation %>
+<% if @user_reservation && !user_signed_in? %>
   <div class="user-reservation">
     <h3>Votre réservation</h3>
     <p><strong>Date :</strong> <%= @user_reservation.date.strftime("%d/%m/%Y") %></p>
     <p><strong>Heure :</strong> <%= @user_reservation.time %></p>
     <p><strong>Personnes :</strong> <%= @user_reservation.people %></p>
-    
+
     <!-- Bouton supprimer -->
     <%= link_to "Annuler", reservation_path(@user_reservation.token),
           data: { turbo_method: :delete, turbo_confirm: "Êtes-vous sûr ?" },

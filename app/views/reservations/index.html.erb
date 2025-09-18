@@ -9,5 +9,5 @@
     <p><strong>Heure:</strong> <%= reservation.time %></p>
     <p><strong>Nombre de personnes:</strong> <%= reservation.people %></p>
   </div>
-  <%= link_to "Delete", reservation_path(reservation), data: {turbo_method: :delete, turbo_confirm: "Êtes-vous sûr?"} %>
+  <%= link_to "Supprimer", reservation_path(reservation.token), data: { turbo_method: :delete, turbo_confirm: "Êtes-vous sûr ?" } %>
 <% end %>

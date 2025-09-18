@@ -10,5 +10,5 @@ Rails.application.routes.draw do
   root to: "pages#home"
 
   resources :dishes
-  resources :reservations, only: [:create, :edit, :update, :destroy, :index], param: :token
+  resources :reservations, only: [:create, :destroy, :index], param: :token
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_10_103023) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_18_134516) do
   create_table "dishes", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -32,6 +32,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_103023) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "time"
+    t.string "token"
+    t.index ["token"], name: "index_reservations_on_token", unique: true
   end
 
   create_table "users", force: :cascade do |t|

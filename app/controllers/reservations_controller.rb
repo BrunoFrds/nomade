@@ -1,27 +1,40 @@
 class ReservationsController < ApplicationController
-  before_action :authenticate_user!, only: [:index]
+  before_action :set_reservation # Callback pour définir la réservation avant certaines actions
+  before_action :authenticate_user!, only: [:index] # S'assure que l'utilisateur est authentifié pour accéder à l'index
 
   # GET /reservations
   def index
-    @reservations = Reservation.all.all.order(:date, :time)
-  end
-
-  # DELETE /reservations/:id
-  def destroy
-    @reservation = Reservation.find(params[:id])
-    @reservation.destroy
-    redirect_to reservations_path, notice: 'La réservation a été supprimée.'
+    @reservations = Reservation.all.order(:date, :time)
   end
 
   # POST /reservations
   def create
-    @reservation = Reservation.new(reservation_params) # on initialise une nouvelle réservation avec les paramètres autorisés
-    if @reservation.save # on tente de sauvegarder la réservation
-      flash[:notice] = "✅ Votre réservation a été enregistrée !" # message de succès
-      redirect_to root_path # on redirige vers la page d'accueil
+    @reservation = Reservation.new(reservation_params)
+    if @reservation.save
+      flash[:notice] = "✅ Votre réservation a été enregistrée !"
+      cookies.permanent[:reservation_token] = @reservation.token
+      redirect_to root_path
     else
-      flash.now[:alert] = "❌ Une erreur est survenue, veuillez réessayer." # message d'erreur
-      render "pages/home", status: :unprocessable_entity # on rend la vue de la page d'accueil
+      # On initialise les variables nécessaires pour la home
+      @dishes = Dish.all
+      @dish = Dish.new
+      if cookies[:reservation_token].present?
+        @user_reservation = Reservation.find_by(token: cookies[:reservation_token])
+      end
+
+      flash.now[:alert] = "❌ Une erreur est survenue, veuillez réessayer."
+      render "pages/home", status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /reservations/:id
+  def destroy
+    @reservation.destroy
+    cookies.delete(:reservation_token) unless user_signed_in?
+    if user_signed_in?
+      redirect_to reservations_path, notice: 'La réservation a été supprimée.'
+    else
+      redirect_to root_path, notice: 'Votre réservation a été annulée.'
     end
   end
 
@@ -30,5 +43,14 @@ class ReservationsController < ApplicationController
   # Strong parameters pour reservation
   def reservation_params
     params.require(:reservation).permit(:date, :time, :people, :first_name, :last_name, :email, :phone)
+  end
+
+  # Callback pour définir la réservation avant certaines actions
+  def set_reservation
+    if user_signed_in?
+      @reservation = Reservation.find_by(id: params[:id]) || Reservation.find_by(token: params[:token])
+    else
+      @reservation = Reservation.find_by(token: params[:token])
+    end
   end
 end
